@@ -35,7 +35,7 @@ models = {
     "Naive Bayes (Bernoulli)": BernoulliNB(),
     "Naive Bayes (Gaussian)": GaussianNB(),
     "Decision Tree": DecisionTreeClassifier(),
-    "SVM": SVC(probability=True),
+    #"SVM": SVC(probability=True),
     "K-Nearest Neighbors": KNeighborsClassifier(),
     "Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
 }
