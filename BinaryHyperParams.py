@@ -8,8 +8,9 @@ from sklearn.naive_bayes import MultinomialNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_curve, auc, confusion_matrix, classification_report
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 # Cargar y preprocesar los datos
 dfSimpleBinary = pd.read_csv('amazon_reviews_simpleBinary.csv')
@@ -156,6 +157,32 @@ for model_name, metrics in results_after.items():
             continue
         print(f"{metric}: {value:.4f}")
     print("\n")
+#Grafico antes de ajuste
+plt.figure(figsize=(10, 5))
+for model_name, metrics in results_before.items():
+    plt.plot(metrics["FPR"], metrics["TPR"], label=f'{model_name} (AUC = {metrics["ROC AUC"]:.4f})')
+
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Curva ROC Comparativa antes de parámetros')
+plt.legend(loc="lower right")
+plt.show()
+
+#grafico despues
+plt.figure(figsize=(10, 5))
+for model_name, metrics in results_after.items():
+    plt.plot(metrics["FPR"], metrics["TPR"], label=f'{model_name} (AUC = {metrics["ROC AUC"]:.4f})')
+plt.plot([0, 1], [0, 1], 'k--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('Curva ROC Comparativa despues de parámetros')
+plt.legend(loc="lower right")
+plt.show()
 
 # Crear el gráfico comparativo de la curva ROC antes y después del ajuste de hiperparámetros
 plt.figure(figsize=(10, 5))
@@ -173,3 +200,56 @@ plt.ylabel('True Positive Rate')
 plt.title('Curva ROC Comparativa antes y después del ajuste de hiperparámetros')
 plt.legend(loc="lower right")
 plt.show()
+
+
+feature_names = tfidf.get_feature_names_out()
+
+for model_name, model in models.items():
+    model.fit(X_train, y_train)
+    y_pred = model.predict(X_test)
+    # Matriz de confusión
+    cm = confusion_matrix(y_test, y_pred, labels=[1, 0])
+    plt.figure(figsize=(8, 6))
+    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', cbar=False, xticklabels=['Positivo', 'Negativo'], yticklabels=['Positivo', 'Negativo'])
+    plt.title(f'Matriz de Confusión para {model_name}')
+    plt.xlabel('Predicción')
+    plt.ylabel('Real')
+
+    # Cálculo de métricas
+    VP = cm[0, 0]  # Verdaderos Positivos
+    FN = cm[0, 1]  # Falsos Negativos
+    FP = cm[1, 0]  # Falsos Positivos
+    VN = cm[1, 1]  # Verdaderos Negativos
+
+    accuracy = (VP + VN) / (VP + FP + FN + VN)
+    precision = VP / (VP + FP) if (VP + FP) != 0 else 0
+    recall = VP / (VP + FN) if (VP + FN) != 0 else 0
+    specificity = VN / (VN + FP) if (VN + FP) != 0 else 0
+    f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) != 0 else 0
+
+    plt.figtext(0.5, -0.1, f'Accuracy: {accuracy:.4f} | Precision: {precision:.4f} | Recall: {recall:.4f} | Specificity: {specificity:.4f} | F1 Score: {f1:.4f}', ha='center', fontsize=10)
+    plt.show()
+
+    # Palabras más importantes
+    if hasattr(model, 'coef_'):
+        coefs = model.coef_[0].toarray() if hasattr(model.coef_[0], 'toarray') else model.coef_[0]
+    elif hasattr(model, 'feature_importances_'):
+        coefs = model.feature_importances_
+    else:
+        continue
+
+    # Asegurarse de que coefs y feature_names tengan la misma longitud
+    if len(coefs) == len(feature_names):
+        top_features = np.argsort(coefs)[-10:]
+        top_weights = coefs[top_features]
+        top_words = [feature_names[i] for i in top_features]
+
+        plt.figure(figsize=(10, 6))
+        sns.barplot(x=top_weights, y=top_words, orient='h')
+        plt.title(f'Palabras más importantes para {model_name}')
+        plt.xlabel('Peso')
+        plt.ylabel('Palabras')
+        plt.show()
+    else:
+        print(
+            f"Error: La longitud de coefs ({len(coefs)}) no coincide con la longitud de feature_names ({len(feature_names)}) para {model_name}")
