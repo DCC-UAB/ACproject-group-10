@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -12,10 +13,14 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+# Crear directorio para guardar los gráficos
+os.makedirs('hyperParams2_plots', exist_ok=True)
+
+# Archivo para guardar las salidas de texto
+output_file = open('Hyperparams2.txt', 'w')
+
 # Cargar y preprocesar los datos
 dfSimpleBinary = pd.read_csv('amazon_reviews2_simpleBinary.csv')
-
-# Eliminar o rellenar valores nulos en la columna 'Text'
 dfSimpleBinary['Text'] = dfSimpleBinary['Text'].fillna('')
 
 tfidf = TfidfVectorizer(max_features=5000)
@@ -31,20 +36,18 @@ models = {
     "Naive Bayes (Multinomial)": MultinomialNB(),
     "Naive Bayes (Bernoulli)": BernoulliNB(),
     "Random Forest": RandomForestClassifier(n_estimators=100),
-    #"Decision Tree": DecisionTreeClassifier(),
+    "Decision Tree": DecisionTreeClassifier(),
     #"SVM": SVC(probability=True),
-    #"K-Nearest Neighbors": KNeighborsClassifier(),
-    #"Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
-
+    "K-Nearest Neighbors": KNeighborsClassifier(),
+    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
 }
 
 # Diccionario para almacenar los resultados
 results_before = {}
 
 for model_name, model in models.items():
-    # Entrenar el modelo
     print(f"Entrenando modelo: {model_name}")
-
+    # Entrenar el modelo
     model.fit(X_train, y_train)
     # Predecir en el conjunto de prueba
     y_pred = model.predict(X_test)
@@ -73,12 +76,6 @@ param_grid = {
         'C': [0.1, 1, 10],
         'solver': ['newton-cg', 'lbfgs']
     },
-    "Naive Bayes (Multinomial)": {
-        'alpha': [0.1, 1, 10]
-    },
-    "Naive Bayes (Bernoulli)": {
-        'alpha': [0.1, 1, 10]
-    },
     "Random Forest": {
         'n_estimators': [50, 100],
         'max_features': ['auto', 'sqrt'],
@@ -102,14 +99,11 @@ param_grid = {
 }
 
 # Crear los modelos base
-models = {
-    "Logistic Regression": LogisticRegression(max_iter=1000),
-
-}
 
 # Buscar los mejores hiperparámetros
 best_params = {}
 for model_name, model in models.items():
+    print(f"Buscando mejores hiperparámetros para: {model_name}")
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid[model_name], cv=3, scoring='accuracy', n_jobs=-1)
     grid_search.fit(X_train, y_train)
     best_params[model_name] = grid_search.best_params_
@@ -117,19 +111,20 @@ for model_name, model in models.items():
 # Definir modelos con los mejores hiperparámetros
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000, **best_params["Logistic Regression"]),
-    "Naive Bayes (Multinomial)": MultinomialNB(
-    ),
-    "Naive Bayes (Bernoulli)": BernoulliNB(
-    ),
     "Random Forest": RandomForestClassifier(**best_params["Random Forest"]),
+    "Naive Bayes (Multinomial)": MultinomialNB(),
+    "Naive Bayes (Bernoulli)": BernoulliNB(),
+    "Decision Tree": DecisionTreeClassifier(),
     #"SVM": SVC(probability=True, **best_params["SVM"]),
-
+    "K-Nearest Neighbors": KNeighborsClassifier(**best_params["K-Nearest Neighbors"]),
+    "Gradient Boosting": GradientBoostingClassifier(**best_params["Gradient Boosting"])
 }
 
 # Diccionario para almacenar los resultados después del ajuste de hiperparámetros
 results_after = {}
 
 for model_name, model in models.items():
+    print(f"Entrenando modelo con mejores hiperparámetros: {model_name}")
     # Entrenar el modelo
     model.fit(X_train, y_train)
     # Predecir en el conjunto de prueba
@@ -153,25 +148,30 @@ for model_name, model in models.items():
         "TPR": tpr
     }
 
-# Imprimir los resultados antes y después del ajuste de hiperparámetros
-print("Resultados antes del ajuste de hiperparámetros:")
-for model_name, metrics in results_before.items():
-    print(f"Resultados para {model_name}:")
-    for metric, value in metrics.items():
-        if isinstance(value, np.ndarray):
-            continue
-        print(f"{metric}: {value:.4f}")
-    print("\n")
+# Aplicar los modelos entrenados al dataset completo
+X_full = tfidf.transform(dfSimpleBinary['Text'])
+y_full = dfSimpleBinary['Score']
 
-print("Resultados después del ajuste de hiperparámetros:")
-for model_name, metrics in results_after.items():
-    print(f"Resultados para {model_name}:")
-    for metric, value in metrics.items():
-        if isinstance(value, np.ndarray):
-            continue
-        print(f"{metric}: {value:.4f}")
-    print("\n")
+for model_name, model in models.items():
+    print(f"Aplicando modelo al dataset completo: {model_name}")
+    y_pred_full = model.predict(X_full)
+    y_pred_prob_full = model.predict_proba(X_full)[:, 1]
+    # Evaluar el rendimiento en el dataset completo
+    accuracy_full = accuracy_score(y_full, y_pred_full)
+    precision_full = precision_score(y_full, y_pred_full, average='binary')
+    recall_full = recall_score(y_full, y_pred_full, average='binary')
+    f1_full = f1_score(y_full, y_pred_full, average='binary')
+    fpr_full, tpr_full, _ = roc_curve(y_full, y_pred_prob_full)
+    roc_auc_full = auc(fpr_full, tpr_full)
+    # Guardar los resultados en el archivo de texto
+    output_file.write(f"Resultados para {model_name} en el dataset completo:\n")
+    output_file.write(f"Accuracy: {accuracy_full:.4f}\n")
+    output_file.write(f"Precision: {precision_full:.4f}\n")
+    output_file.write(f"Recall: {recall_full:.4f}\n")
+    output_file.write(f"F1 Score: {f1_full:.4f}\n")
+    output_file.write(f"ROC AUC: {roc_auc_full:.4f}\n\n")
 
+# Guardar gráficos
 # Grafico antes de ajuste
 plt.figure(figsize=(10, 5))
 for model_name, metrics in results_before.items():
@@ -184,7 +184,8 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Curva ROC Comparativa antes de parámetros')
 plt.legend(loc="lower right")
-plt.show()
+plt.savefig('hyperParams2_plots/roc_before.png')
+plt.close()
 
 # Grafico después
 plt.figure(figsize=(10, 5))
@@ -197,7 +198,8 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Curva ROC Comparativa después de parámetros')
 plt.legend(loc="lower right")
-plt.show()
+plt.savefig('hyperParams2_plots/roc_after.png')
+plt.close()
 
 # Crear el gráfico comparativo de la curva ROC antes y después del ajuste de hiperparámetros
 plt.figure(figsize=(10, 5))
@@ -214,7 +216,8 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Curva ROC Comparativa antes y después del ajuste de hiperparámetros')
 plt.legend(loc="lower right")
-plt.show()
+plt.savefig('hyperParams2_plots/roc_comparative.png')
+plt.close()
 
 feature_names = tfidf.get_feature_names_out()
 
@@ -228,6 +231,8 @@ for model_name, model in models.items():
     plt.title(f'Matriz de Confusión para {model_name}')
     plt.xlabel('Predicción')
     plt.ylabel('Real')
+    plt.savefig(f'hyperParams2_plots/confusion_matrix_{model_name}.png')
+    plt.close()
 
     # Cálculo de métricas
     VP = cm[0, 0]  # Verdaderos Positivos
@@ -241,8 +246,8 @@ for model_name, model in models.items():
     specificity = VN / (VN + FP) if (VN + FP) != 0 else 0
     f1 = (2 * precision * recall) / (precision + recall) if (precision + recall) != 0 else 0
 
-    plt.figtext(0.5, -0.1, f'Accuracy: {accuracy:.4f} | Precision: {precision:.4f} | Recall: {recall:.4f} | Specificity: {specificity:.4f} | F1 Score: {f1:.4f}', ha='center', fontsize=10)
-    plt.show()
+    output_file.write(f'Matriz de Confusión para {model_name}:\n')
+    output_file.write(f'Accuracy: {accuracy:.4f} | Precision: {precision:.4f} | Recall: {recall:.4f} | Specificity: {specificity:.4f} | F1 Score: {f1:.4f}\n\n')
 
     # Palabras más importantes
     if hasattr(model, 'coef_'):
@@ -263,6 +268,10 @@ for model_name, model in models.items():
         plt.title(f'Palabras más importantes para {model_name}')
         plt.xlabel('Peso')
         plt.ylabel('Palabras')
-        plt.show()
+        plt.savefig(f'hyperParams2_plots/top_words_{model_name}.png')
+        plt.close()
     else:
-        print(f"Error: La longitud de coefs ({len(coefs)}) no coincide con la longitud de feature_names ({len(feature_names)}) para {model_name}")
+        output_file.write(f"Error: La longitud de coefs ({len(coefs)}) no coincide con la longitud de feature_names ({len(feature_names)}) para {model_name}\n")
+
+# Cerrar el archivo de salida
+output_file.close()
