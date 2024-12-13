@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.naive_bayes import MultinomialNB, BernoulliNB
+from sklearn.naive_bayes import MultinomialNB, BernoulliNB, GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
@@ -35,11 +35,13 @@ models = {
     "Logistic Regression": LogisticRegression(max_iter=1000),
     "Naive Bayes (Multinomial)": MultinomialNB(),
     "Naive Bayes (Bernoulli)": BernoulliNB(),
-    "Random Forest": RandomForestClassifier(n_estimators=100),
-    "Decision Tree": DecisionTreeClassifier(),
+    #"Naive Bayes (Gaussian)": GaussianNB(),
+
+    #"Random Forest": RandomForestClassifier(n_estimators=100),
+    #"Decision Tree": DecisionTreeClassifier(),
     #"SVM": SVC(probability=True),
-    "K-Nearest Neighbors": KNeighborsClassifier(),
-    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
+    #"K-Nearest Neighbors": KNeighborsClassifier(),
+    #"Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
 }
 
 # Diccionario para almacenar los resultados
@@ -99,7 +101,18 @@ param_grid = {
 }
 
 # Crear los modelos base
+models = {
+    "Logistic Regression": LogisticRegression(max_iter=1000),
+    #"Random Forest": RandomForestClassifier(),
+    #"Naive Bayes (Multinomial)": MultinomialNB(),
+    #"Naive Bayes (Bernoulli)": BernoulliNB(),
+    #"Naive Bayes (Gaussian)": GaussianNB(),
+    # "Decision Tree": DecisionTreeClassifier(),
+    # "SVM": SVC(probability=True),
+    # "K-Nearest Neighbors": KNeighborsClassifier(),
+    # "Gradient Boosting": GradientBoostingClassifier()
 
+    }
 # Buscar los mejores hiperparámetros
 best_params = {}
 for model_name, model in models.items():
@@ -111,13 +124,14 @@ for model_name, model in models.items():
 # Definir modelos con los mejores hiperparámetros
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000, **best_params["Logistic Regression"]),
-    "Random Forest": RandomForestClassifier(**best_params["Random Forest"]),
+    #"Random Forest": RandomForestClassifier(**best_params["Random Forest"]),
     "Naive Bayes (Multinomial)": MultinomialNB(),
     "Naive Bayes (Bernoulli)": BernoulliNB(),
-    "Decision Tree": DecisionTreeClassifier(),
+    #"Naive Bayes (Gaussian)": GaussianNB(),
+    #"Decision Tree": DecisionTreeClassifier(),
     #"SVM": SVC(probability=True, **best_params["SVM"]),
-    "K-Nearest Neighbors": KNeighborsClassifier(**best_params["K-Nearest Neighbors"]),
-    "Gradient Boosting": GradientBoostingClassifier(**best_params["Gradient Boosting"])
+    #"K-Nearest Neighbors": KNeighborsClassifier(**best_params["K-Nearest Neighbors"]),
+    #"Gradient Boosting": GradientBoostingClassifier(**best_params["Gradient Boosting"])
 }
 
 # Diccionario para almacenar los resultados después del ajuste de hiperparámetros
