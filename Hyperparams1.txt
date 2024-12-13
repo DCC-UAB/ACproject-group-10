@@ -1,0 +1,61 @@
+Resultados para Logistic Regression en el dataset completo:
+Accuracy: 0.9900
+Precision: 0.9909
+Recall: 0.9985
+F1 Score: 0.9947
+ROC AUC: 0.9945
+
+Resultados para Random Forest en el dataset completo:
+Accuracy: 0.9888
+Precision: 0.9882
+Recall: 1.0000
+F1 Score: 0.9940
+ROC AUC: 0.9976
+
+Resultados para Naive Bayes en el dataset completo:
+Accuracy: 0.9341
+Precision: 0.9341
+Recall: 1.0000
+F1 Score: 0.9659
+ROC AUC: 0.9333
+
+Resultados para Decision Tree en el dataset completo:
+Accuracy: 0.9866
+Precision: 0.9941
+Recall: 0.9915
+F1 Score: 0.9928
+ROC AUC: 0.9541
+
+Resultados para SVM en el dataset completo:
+Accuracy: 0.9929
+Precision: 0.9952
+Recall: 0.9972
+F1 Score: 0.9962
+ROC AUC: 0.9960
+
+Resultados para K-Nearest Neighbors en el dataset completo:
+Accuracy: 0.9491
+Precision: 0.9511
+Recall: 0.9967
+F1 Score: 0.9734
+ROC AUC: 0.9526
+
+Matriz de Confusión para Logistic Regression:
+Accuracy: 0.9644 | Precision: 0.9695 | Recall: 0.9935 | Specificity: 0.4821 | F1 Score: 0.9814
+
+Matriz de Confusión para Random Forest:
+Accuracy: 0.9440 | Precision: 0.9440 | Recall: 1.0000 | Specificity: 0.0179 | F1 Score: 0.9712
+
+Matriz de Confusión para Naive Bayes:
+Accuracy: 0.9430 | Precision: 0.9430 | Recall: 1.0000 | Specificity: 0.0000 | F1 Score: 0.9707
+
+Matriz de Confusión para Decision Tree:
+Accuracy: 0.9288 | Precision: 0.9683 | Recall: 0.9558 | Specificity: 0.4821 | F1 Score: 0.9620
+
+Matriz de Confusión para SVM:
+Accuracy: 0.9644 | Precision: 0.9765 | Recall: 0.9860 | Specificity: 0.6071 | F1 Score: 0.9812
+
+Error: La longitud de coefs (1) no coincide con la longitud de feature_names (5000) para SVM
+Matriz de Confusión para K-Nearest Neighbors:
+Accuracy: 0.9471 | Precision: 0.9515 | Recall: 0.9946 | Specificity: 0.1607 | F1 Score: 0.9726
+

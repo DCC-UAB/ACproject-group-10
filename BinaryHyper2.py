@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
-from sklearn.naive_bayes import MultinomialNB
+from sklearn.naive_bayes import MultinomialNB, BernoulliNB, GaussianNB
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.svm import SVC
 from sklearn.neighbors import KNeighborsClassifier
@@ -14,16 +14,18 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Crear directorio para guardar los gráficos
-os.makedirs('hyperParams1_plots', exist_ok=True)
+os.makedirs('hyperParams2_plots', exist_ok=True)
 
 # Archivo para guardar las salidas de texto
-output_file = open('Hyperparams1.txt', 'w')
+output_file = open('Hyperparams2.txt', 'w')
 
 # Cargar y preprocesar los datos
-dfSimpleBinary = pd.read_csv('amazon_reviews_simpleBinary.csv')
+dfSimpleBinary = pd.read_csv('amazon_reviews2_simpleBinary.csv')
+dfSimpleBinary['Text'] = dfSimpleBinary['Text'].fillna('')
+
 tfidf = TfidfVectorizer(max_features=5000)
-X = tfidf.fit_transform(dfSimpleBinary['reviewText'])
-y = dfSimpleBinary['overall']
+X = tfidf.fit_transform(dfSimpleBinary['Text'])
+y = dfSimpleBinary['Score']
 
 # División de datos en entrenamiento y prueba
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
@@ -31,18 +33,22 @@ X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_
 # Definir modelos sin ajuste de hiperparámetros
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000),
+    "Naive Bayes (Multinomial)": MultinomialNB(),
+    "Naive Bayes (Bernoulli)": BernoulliNB(),
+    #"Naive Bayes (Gaussian)": GaussianNB(),
+
     "Random Forest": RandomForestClassifier(n_estimators=100),
-    "Naive Bayes": MultinomialNB(),
     "Decision Tree": DecisionTreeClassifier(),
-    "SVM": SVC(probability=True),
-    "K-Nearest Neighbors": KNeighborsClassifier()
+    #"SVM": SVC(probability=True),
+    "K-Nearest Neighbors": KNeighborsClassifier(),
+    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
 }
 
 # Diccionario para almacenar los resultados
 results_before = {}
 
 for model_name, model in models.items():
-    print(f"Entrenando modelo: {model_name}")
+    output_file.write(f"Entrenando modelo: {model_name}\n")
     # Entrenar el modelo
     model.fit(X_train, y_train)
     # Predecir en el conjunto de prueba
@@ -97,8 +103,12 @@ param_grid = {
 # Crear los modelos base
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000),
-    "Random Forest": RandomForestClassifier(random_state=42),
-    "SVM": SVC(probability=True),
+    "Random Forest": RandomForestClassifier(),
+    #"Naive Bayes (Multinomial)": MultinomialNB(),
+    #"Naive Bayes (Bernoulli)": BernoulliNB(),
+    #"Naive Bayes (Gaussian)": GaussianNB(),
+    # "Decision Tree": DecisionTreeClassifier(),
+    # "SVM": SVC(probability=True),
     "K-Nearest Neighbors": KNeighborsClassifier(),
     "Gradient Boosting": GradientBoostingClassifier()
 }
@@ -106,26 +116,30 @@ models = {
 # Buscar los mejores hiperparámetros
 best_params = {}
 for model_name, model in models.items():
-    print(f"Buscando mejores hiperparámetros para: {model_name}")
+    output_file.write(f"Buscando mejores hiperparámetros para: {model_name}\n")
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid[model_name], cv=3, scoring='accuracy', n_jobs=-1)
     grid_search.fit(X_train, y_train)
     best_params[model_name] = grid_search.best_params_
+output_file.write(f"{best_params}\n")
 
 # Definir modelos con los mejores hiperparámetros
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000, **best_params["Logistic Regression"]),
     "Random Forest": RandomForestClassifier(**best_params["Random Forest"]),
-    "Naive Bayes": MultinomialNB(),
-    "Decision Tree": DecisionTreeClassifier(),
-    "SVM": SVC(probability=True, **best_params["SVM"]),
-    "K-Nearest Neighbors": KNeighborsClassifier(**best_params["K-Nearest Neighbors"])
+    "Naive Bayes (Multinomial)": MultinomialNB(),
+    "Naive Bayes (Bernoulli)": BernoulliNB(),
+    #"Naive Bayes (Gaussian)": GaussianNB(),
+    #"Decision Tree": DecisionTreeClassifier(),
+    #"SVM": SVC(probability=True, **best_params["SVM"]),
+    "K-Nearest Neighbors": KNeighborsClassifier(**best_params["K-Nearest Neighbors"]),
+    "Gradient Boosting": GradientBoostingClassifier(**best_params["Gradient Boosting"])
 }
 
 # Diccionario para almacenar los resultados después del ajuste de hiperparámetros
 results_after = {}
 
 for model_name, model in models.items():
-    print(f"Entrenando modelo con mejores hiperparámetros: {model_name}")
+    output_file.write(f"Entrenando modelo con mejores hiperparámetros: {model_name}\n")
     # Entrenar el modelo
     model.fit(X_train, y_train)
     # Predecir en el conjunto de prueba
@@ -150,11 +164,11 @@ for model_name, model in models.items():
     }
 
 # Aplicar los modelos entrenados al dataset completo
-X_full = tfidf.transform(dfSimpleBinary['reviewText'])
-y_full = dfSimpleBinary['overall']
+X_full = tfidf.transform(dfSimpleBinary['Text'])
+y_full = dfSimpleBinary['Score']
 
 for model_name, model in models.items():
-    print(f"Aplicando modelo al dataset completo: {model_name}")
+    output_file.write(f"Aplicando modelo al dataset completo: {model_name}\n")
     y_pred_full = model.predict(X_full)
     y_pred_prob_full = model.predict_proba(X_full)[:, 1]
     # Evaluar el rendimiento en el dataset completo
@@ -185,7 +199,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Curva ROC Comparativa antes de parámetros')
 plt.legend(loc="lower right")
-plt.savefig('hyperParams1_plots/roc_before.png')
+plt.savefig('hyperParams2_plots/roc_before.png')
 plt.close()
 
 # Grafico después
@@ -199,7 +213,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Curva ROC Comparativa después de parámetros')
 plt.legend(loc="lower right")
-plt.savefig('hyperParams1_plots/roc_after.png')
+plt.savefig('hyperParams2_plots/roc_after.png')
 plt.close()
 
 # Crear el gráfico comparativo de la curva ROC antes y después del ajuste de hiperparámetros
@@ -217,7 +231,7 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Curva ROC Comparativa antes y después del ajuste de hiperparámetros')
 plt.legend(loc="lower right")
-plt.savefig('hyperParams1_plots/roc_comparative.png')
+plt.savefig('hyperParams2_plots/roc_comparative.png')
 plt.close()
 
 feature_names = tfidf.get_feature_names_out()
@@ -232,7 +246,7 @@ for model_name, model in models.items():
     plt.title(f'Matriz de Confusión para {model_name}')
     plt.xlabel('Predicción')
     plt.ylabel('Real')
-    plt.savefig(f'hyperParams1_plots/confusion_matrix_{model_name}.png')
+    plt.savefig(f'hyperParams2_plots/confusion_matrix_{model_name}.png')
     plt.close()
 
     # Cálculo de métricas
@@ -269,7 +283,7 @@ for model_name, model in models.items():
         plt.title(f'Palabras más importantes para {model_name}')
         plt.xlabel('Peso')
         plt.ylabel('Palabras')
-        plt.savefig(f'hyperParams1_plots/top_words_{model_name}.png')
+        plt.savefig(f'hyperParams2_plots/top_words_{model_name}.png')
         plt.close()
     else:
         output_file.write(f"Error: La longitud de coefs ({len(coefs)}) no coincide con la longitud de feature_names ({len(feature_names)}) para {model_name}\n")
