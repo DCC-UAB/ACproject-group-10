@@ -37,18 +37,18 @@ models = {
     "Naive Bayes (Bernoulli)": BernoulliNB(),
     #"Naive Bayes (Gaussian)": GaussianNB(),
 
-    #"Random Forest": RandomForestClassifier(n_estimators=100),
-    #"Decision Tree": DecisionTreeClassifier(),
+    "Random Forest": RandomForestClassifier(n_estimators=100),
+    "Decision Tree": DecisionTreeClassifier(),
     #"SVM": SVC(probability=True),
-    #"K-Nearest Neighbors": KNeighborsClassifier(),
-    #"Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
+    "K-Nearest Neighbors": KNeighborsClassifier(),
+    "Gradient Boosting": GradientBoostingClassifier(n_estimators=100)
 }
 
 # Diccionario para almacenar los resultados
 results_before = {}
 
 for model_name, model in models.items():
-    print(f"Entrenando modelo: {model_name}")
+    output_file.write(f"Entrenando modelo: {model_name}\n")
     # Entrenar el modelo
     model.fit(X_train, y_train)
     # Predecir en el conjunto de prueba
@@ -103,42 +103,43 @@ param_grid = {
 # Crear los modelos base
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000),
-    #"Random Forest": RandomForestClassifier(),
+    "Random Forest": RandomForestClassifier(),
     #"Naive Bayes (Multinomial)": MultinomialNB(),
     #"Naive Bayes (Bernoulli)": BernoulliNB(),
     #"Naive Bayes (Gaussian)": GaussianNB(),
     # "Decision Tree": DecisionTreeClassifier(),
     # "SVM": SVC(probability=True),
-    # "K-Nearest Neighbors": KNeighborsClassifier(),
-    # "Gradient Boosting": GradientBoostingClassifier()
+    "K-Nearest Neighbors": KNeighborsClassifier(),
+    "Gradient Boosting": GradientBoostingClassifier()
+}
 
-    }
 # Buscar los mejores hiperparámetros
 best_params = {}
 for model_name, model in models.items():
-    print(f"Buscando mejores hiperparámetros para: {model_name}")
+    output_file.write(f"Buscando mejores hiperparámetros para: {model_name}\n")
     grid_search = GridSearchCV(estimator=model, param_grid=param_grid[model_name], cv=3, scoring='accuracy', n_jobs=-1)
     grid_search.fit(X_train, y_train)
     best_params[model_name] = grid_search.best_params_
+output_file.write(f"{best_params}\n")
 
 # Definir modelos con los mejores hiperparámetros
 models = {
     "Logistic Regression": LogisticRegression(max_iter=1000, **best_params["Logistic Regression"]),
-    #"Random Forest": RandomForestClassifier(**best_params["Random Forest"]),
+    "Random Forest": RandomForestClassifier(**best_params["Random Forest"]),
     "Naive Bayes (Multinomial)": MultinomialNB(),
     "Naive Bayes (Bernoulli)": BernoulliNB(),
     #"Naive Bayes (Gaussian)": GaussianNB(),
     #"Decision Tree": DecisionTreeClassifier(),
     #"SVM": SVC(probability=True, **best_params["SVM"]),
-    #"K-Nearest Neighbors": KNeighborsClassifier(**best_params["K-Nearest Neighbors"]),
-    #"Gradient Boosting": GradientBoostingClassifier(**best_params["Gradient Boosting"])
+    "K-Nearest Neighbors": KNeighborsClassifier(**best_params["K-Nearest Neighbors"]),
+    "Gradient Boosting": GradientBoostingClassifier(**best_params["Gradient Boosting"])
 }
 
 # Diccionario para almacenar los resultados después del ajuste de hiperparámetros
 results_after = {}
 
 for model_name, model in models.items():
-    print(f"Entrenando modelo con mejores hiperparámetros: {model_name}")
+    output_file.write(f"Entrenando modelo con mejores hiperparámetros: {model_name}\n")
     # Entrenar el modelo
     model.fit(X_train, y_train)
     # Predecir en el conjunto de prueba
@@ -167,7 +168,7 @@ X_full = tfidf.transform(dfSimpleBinary['Text'])
 y_full = dfSimpleBinary['Score']
 
 for model_name, model in models.items():
-    print(f"Aplicando modelo al dataset completo: {model_name}")
+    output_file.write(f"Aplicando modelo al dataset completo: {model_name}\n")
     y_pred_full = model.predict(X_full)
     y_pred_prob_full = model.predict_proba(X_full)[:, 1]
     # Evaluar el rendimiento en el dataset completo
