@@ -1,30 +1,9 @@
-Resultados para Logistic Regression en el dataset completo:
-Accuracy: 0.9230
-Precision: 0.9402
-Recall: 0.9718
-F1 Score: 0.9558
-ROC AUC: 0.9485
-
-Resultados para Naive Bayes (Multinomial) en el dataset completo:
-Accuracy: 0.8801
-Precision: 0.8805
-Recall: 0.9949
-F1 Score: 0.9342
-ROC AUC: 0.9245
-
-Resultados para Naive Bayes (Bernoulli) en el dataset completo:
-Accuracy: 0.8763
-Precision: 0.9345
-Recall: 0.9199
-F1 Score: 0.9271
-ROC AUC: 0.9056
-
-Matriz de Confusión para Logistic Regression:
-Accuracy: 0.9197 | Precision: 0.9386 | Recall: 0.9698 | Specificity: 0.6178 | F1 Score: 0.9539
-
-Matriz de Confusión para Naive Bayes (Multinomial):
-Accuracy: 0.8817 | Precision: 0.8821 | Recall: 0.9951 | Specificity: 0.1985 | F1 Score: 0.9352
-
-Matriz de Confusión para Naive Bayes (Bernoulli):
-Accuracy: 0.8749 | Precision: 0.9341 | Recall: 0.9189 | Specificity: 0.6094 | F1 Score: 0.9265
-
+Entrenando modelo: Logistic Regression
+Entrenando modelo: Naive Bayes (Multinomial)
+Entrenando modelo: Naive Bayes (Bernoulli)
+Entrenando modelo: Random Forest
+Entrenando modelo: Decision Tree
+Entrenando modelo: K-Nearest Neighbors
+Entrenando modelo: Gradient Boosting
+Buscando mejores hiperparámetros para: Logistic Regression
+Buscando mejores hiperparámetros para: Random Forest

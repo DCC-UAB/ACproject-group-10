@@ -1,0 +1,67 @@
+{'Logistic Regression': {'C': 1, 'solver': 'newton-cg'}, 'Random Forest': {'criterion': 'gini', 'max_depth': None, 'max_features': 'sqrt', 'n_estimators': 100}, 'K-Nearest Neighbors': {'metric': 'euclidean', 'n_neighbors': 5, 'weights': 'distance'}, 'Gradient Boosting': {'learning_rate': 0.1, 'max_depth': 5, 'n_estimators': 100}}
+Entrenando modelo con mejores hiperparámetros: Logistic Regression
+Entrenando modelo con mejores hiperparámetros: Random Forest
+Entrenando modelo con mejores hiperparámetros: Naive Bayes (Multinomial)
+Entrenando modelo con mejores hiperparámetros: Naive Bayes (Bernoulli)
+Entrenando modelo con mejores hiperparámetros: K-Nearest Neighbors
+Entrenando modelo con mejores hiperparámetros: Gradient Boosting
+Resultados para Logistic Regression en el dataset completo:
+Accuracy: 0.8708
+Precision: 0.9787
+Recall: 0.8679
+F1 Score: 0.9200
+ROC AUC: 0.9457
+
+Resultados para Random Forest en el dataset completo:
+Accuracy: 0.9109
+Precision: 0.9956
+Recall: 0.8999
+F1 Score: 0.9453
+ROC AUC: 0.9908
+
+Resultados para Naive Bayes (Multinomial) en el dataset completo:
+Accuracy: 0.8491
+Precision: 0.9705
+Recall: 0.8495
+F1 Score: 0.9060
+ROC AUC: 0.9247
+
+Resultados para Naive Bayes (Bernoulli) en el dataset completo:
+Accuracy: 0.8561
+Precision: 0.9588
+Recall: 0.8692
+F1 Score: 0.9118
+ROC AUC: 0.9075
+
+Resultados para K-Nearest Neighbors en el dataset completo:
+Accuracy: 0.9692
+Precision: 0.9806
+Recall: 0.9835
+F1 Score: 0.9820
+ROC AUC: 0.9704
+
+Resultados para Gradient Boosting en el dataset completo:
+Accuracy: 0.7838
+Precision: 0.9681
+Recall: 0.7728
+F1 Score: 0.8595
+ROC AUC: 0.8975
+
+Matriz de Confusión para Logistic Regression:
+Accuracy: 0.8745 | Precision: 0.8782 | Recall: 0.8673 | Specificity: 0.8816 | F1 Score: 0.8727
+
+Matriz de Confusión para Random Forest:
+Accuracy: 0.8829 | Precision: 0.8796 | Recall: 0.8850 | Specificity: 0.8809 | F1 Score: 0.8823
+
+Matriz de Confusión para Naive Bayes (Multinomial):
+Accuracy: 0.8475 | Precision: 0.8447 | Recall: 0.8485 | Specificity: 0.8465 | F1 Score: 0.8466
+
+Matriz de Confusión para Naive Bayes (Bernoulli):
+Accuracy: 0.8232 | Precision: 0.7935 | Recall: 0.8697 | Specificity: 0.7774 | F1 Score: 0.8299
+
+Matriz de Confusión para K-Nearest Neighbors:
+Accuracy: 0.7024 | Precision: 0.6278 | Recall: 0.9824 | Specificity: 0.4271 | F1 Score: 0.7660
+
+Matriz de Confusión para Gradient Boosting:
+Accuracy: 0.8091 | Precision: 0.8287 | Recall: 0.7752 | Specificity: 0.8424 | F1 Score: 0.8011
+
