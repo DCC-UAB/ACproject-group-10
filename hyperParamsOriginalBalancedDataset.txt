@@ -9,11 +9,11 @@ Recall: 0.8497
 F1 Score: 0.9183
 ROC AUC: 0.9502
 Results for Random Forest:
-Accuracy: 0.8765
-Precision: 0.9971
-Recall: 0.8772
-F1 Score: 0.9333
-ROC AUC: 0.9305
+Accuracy: 0.8610
+Precision: 0.9973
+Recall: 0.8612
+F1 Score: 0.9243
+ROC AUC: 0.9303
 Results for K-Nearest Neighbors:
 Accuracy: 0.8069
 Precision: 0.9971
@@ -21,8 +21,8 @@ Recall: 0.8063
 F1 Score: 0.8916
 ROC AUC: 0.8979
 Results for Gradient Boosting:
-Accuracy: 0.8458
-Precision: 0.9967
-Recall: 0.8462
-F1 Score: 0.9153
-ROC AUC: 0.9167
+Accuracy: 0.8439
+Precision: 0.9975
+Recall: 0.8437
+F1 Score: 0.9142
+ROC AUC: 0.9204
