@@ -1,0 +1,63 @@
+Resultados para Logistic Regression:
+Accuracy: 0.9451
+Precision: 0.9477
+Recall: 0.9968
+F1 Score: 0.9716
+ROC AUC: 0.9638
+
+Resultados para Random Forest:
+Accuracy: 0.9440
+Precision: 0.9440
+Recall: 1.0000
+F1 Score: 0.9712
+ROC AUC: 0.9544
+
+Resultados para Naive Bayes (Multinomial):
+Accuracy: 0.9430
+Precision: 0.9430
+Recall: 1.0000
+F1 Score: 0.9707
+ROC AUC: 0.8603
+
+Resultados para Naive Bayes (Bernoulli):
+Accuracy: 0.9186
+Precision: 0.9669
+Recall: 0.9461
+F1 Score: 0.9564
+ROC AUC: 0.8949
+
+Resultados para Naive Bayes (Gaussian):
+Accuracy: 0.6938
+Precision: 0.9446
+Recall: 0.7174
+F1 Score: 0.8155
+ROC AUC: 0.5108
+
+Resultados para Decision Tree:
+Accuracy: 0.9318
+Precision: 0.9694
+Recall: 0.9579
+F1 Score: 0.9636
+ROC AUC: 0.7290
+
+Resultados para SVM:
+Accuracy: 0.9491
+Precision: 0.9507
+Recall: 0.9978
+F1 Score: 0.9737
+ROC AUC: 0.9597
+
+Resultados para K-Nearest Neighbors:
+Accuracy: 0.9471
+Precision: 0.9515
+Recall: 0.9946
+F1 Score: 0.9726
+ROC AUC: 0.8338
+
+Resultados para Gradient Boosting:
+Accuracy: 0.9481
+Precision: 0.9553
+Recall: 0.9914
+F1 Score: 0.9730
+ROC AUC: 0.9070
+

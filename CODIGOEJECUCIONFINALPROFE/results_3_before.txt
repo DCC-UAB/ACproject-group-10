@@ -1,0 +1,21 @@
+Resultados para Logistic Regression:
+Accuracy: 0.8740
+Precision: 0.8774
+Recall: 0.8669
+F1 Score: 0.8721
+ROC AUC: 0.9429
+
+Resultados para Naive Bayes (Multinomial):
+Accuracy: 0.8475
+Precision: 0.8447
+Recall: 0.8485
+F1 Score: 0.8466
+ROC AUC: 0.9238
+
+Resultados para Naive Bayes (Bernoulli):
+Accuracy: 0.8232
+Precision: 0.7935
+Recall: 0.8697
+F1 Score: 0.8299
+ROC AUC: 0.9072
+

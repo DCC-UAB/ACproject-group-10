@@ -1,0 +1,3 @@
+Mejores hiperparámetros para Logistic Regression: {'C': 1, 'solver': 'liblinear'}
+Mejores hiperparámetros para Naive Bayes (Multinomial): {'alpha': 10.0}
+Mejores hiperparámetros para Naive Bayes (Bernoulli): {'alpha': 0.1}
