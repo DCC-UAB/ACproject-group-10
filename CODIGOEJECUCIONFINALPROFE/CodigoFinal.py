@@ -1,5 +1,7 @@
 import os
 import re
+import kagglehub
+import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -33,6 +35,15 @@ print("El codigo de este script es el usado durante toda la practica, solo reorg
 nltk.download('stopwords')
 nltk.download('punkt')
 
+
+print("descarga de dataset grande, dataset base esta en el directorio actual")
+# Descargar el dataset al directorio actual
+current_directory = os.getcwd()
+
+# Descargar el dataset al directorio actual
+path = kagglehub.dataset_download("snap/amazon-fine-food-reviews", current_directory)
+print("Si aparece un error de descarga, borrar la linea de descarga y simplemente no se usara el dataset grande, cuyos resultados igual estan en el repositorio de antemano")
+print("Path to dataset files:", path)
 ###############################################################################
 #                           FUNCIÓN DE LIMPIEZA DE TEXTO
 ###############################################################################
