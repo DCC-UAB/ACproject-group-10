@@ -41,8 +41,11 @@ print("descarga de dataset grande, dataset base esta en el directorio actual")
 current_directory = os.getcwd()
 
 # Descargar el dataset al directorio actual
-path = kagglehub.dataset_download("snap/amazon-fine-food-reviews", current_directory)
 print("Si aparece un error de descarga, borrar la linea de descarga y simplemente no se usara el dataset grande, cuyos resultados igual estan en el repositorio de antemano")
+sleep(1)
+print("Tambien se puede descargar manualmente de https://www.kaggle.com/snap/amazon-fine-food-reviews")
+sleep(5)
+path = kagglehub.dataset_download("snap/amazon-fine-food-reviews", current_directory)
 print("Path to dataset files:", path)
 ###############################################################################
 #                           FUNCIÓN DE LIMPIEZA DE TEXTO
