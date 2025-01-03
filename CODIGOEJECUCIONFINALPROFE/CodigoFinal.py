@@ -45,8 +45,9 @@ print("Si aparece un error de descarga, borrar la linea de descarga y simplement
 sleep(1)
 print("Tambien se puede descargar manualmente de https://www.kaggle.com/snap/amazon-fine-food-reviews")
 sleep(5)
-#path = kagglehub.dataset_download("snap/amazon-fine-food-reviews", current_directory)
-#print("Path to dataset files:", path)
+if not os.path.exists('reviews.csv'):
+    path = kagglehub.dataset_download("snap/amazon-fine-food-reviews", current_directory)
+    print("Path to dataset files:", path)
 
 ###############################################################################
 #                           FUNCIÓN DE LIMPIEZA DE TEXTO
@@ -173,7 +174,7 @@ def train_and_evaluate(models, X_train, X_test, y_train, y_test, folder_name, ou
 ###############################################################################
 #                   FUNCIÓN PARA BÚSQUEDA DE HIPERPARÁMETROS
 ###############################################################################
-def hyperparameter_search(model, param_grid, X_train, y_train):
+def hyperparameter_search(model, param_grid, X_train, y_train, output_file):
     """
     Realiza búsqueda de hiperparámetros con GridSearchCV.
     Retorna grid_search ya ajustado.
@@ -182,6 +183,7 @@ def hyperparameter_search(model, param_grid, X_train, y_train):
                                cv=3, scoring='accuracy', n_jobs=-1,
                                return_train_score=True)
     grid_search.fit(X_train, y_train)
+    output_file.write(f"Mejores hiperparámetros para {model.__class__.__name__}: {grid_search.best_params_}\n")
     return grid_search
 
 ###############################################################################
@@ -233,9 +235,9 @@ results_1 = train_and_evaluate(models_1, X_train_1, X_test_1, y_train_1, y_test_
                                'plots_primer_dataset', 'results_primer_dataset.txt', feature_names_1)
 
 ###############################################################################
-#          BÚSQUEDA DE HIPERPARÁMETROS PARA ALGUNOS MODELOS (1er dataset)
+#          BÚSQUEDA DE HIPERPARÁMETROS PARA TODOS LOS MODELOS (1er dataset)
 ###############################################################################
-# Ejemplo: Logistic Regression y Random Forest
+# Definición de grids de hiperparámetros para cada modelo
 param_grid_1 = {
     "Logistic Regression": {
         'C': [0.01, 0.1, 1, 10, 100],
@@ -245,16 +247,40 @@ param_grid_1 = {
         'n_estimators': [50, 100],
         'max_features': ['auto', 'sqrt'],
         'max_depth': [None, 10, 20]
+    },
+    "Naive Bayes (Multinomial)": {
+        'alpha': [0.1, 1.0, 10.0]
+    },
+    "Naive Bayes (Bernoulli)": {
+        'alpha': [0.1, 1.0, 10.0]
+    },
+    "Decision Tree": {
+        'max_depth': [None, 10, 20, 30],
+        'min_samples_split': [2, 10, 20]
+    },
+    "SVM": {
+        'C': [0.1, 1, 10],
+        'kernel': ['linear', 'rbf']
+    },
+    "K-Nearest Neighbors": {
+        'n_neighbors': [3, 5, 7],
+        'weights': ['uniform', 'distance']
+    },
+    "Gradient Boosting": {
+        'n_estimators': [50, 100],
+        'learning_rate': [0.01, 0.1, 0.2],
+        'max_depth': [3, 5, 7]
     }
 }
 
 best_params_1 = {}
-for model_name in ["Logistic Regression", "Random Forest"]:
-    print(f"\nBúsqueda de hiperparámetros para {model_name} (dataset 1)")
-    base_model = models_1[model_name]
-    grid_search_1 = hyperparameter_search(base_model, param_grid_1[model_name], X_train_1, y_train_1)
-    best_params_1[model_name] = grid_search_1.best_params_
-    print("Mejores hiperparámetros:", grid_search_1.best_params_)
+with open('results_primer_dataset.txt', 'a') as output_file:
+    for model_name, param_grid in param_grid_1.items():
+        print(f"\nBúsqueda de hiperparámetros para {model_name} (dataset 1)")
+        base_model = models_1[model_name]
+        grid_search_1 = hyperparameter_search(base_model, param_grid, X_train_1, y_train_1, output_file)
+        best_params_1[model_name] = grid_search_1.best_params_
+        print(f"Mejores hiperparámetros para {model_name}:", grid_search_1.best_params_)
 
 ###############################################################################
 #                        SEGUNDO DATASET (balanceado)
@@ -280,15 +306,52 @@ results_2 = train_and_evaluate(models_2, X_train_2, X_test_2, y_train_2, y_test_
                                'plots_segundo_dataset', 'results_segundo_dataset.txt', feature_names_1)
 
 ###############################################################################
-#   BÚSQUEDA DE HIPERPARÁMETROS PARA ALGUNOS MODELOS (2do dataset balanceado)
+#   BÚSQUEDA DE HIPERPARÁMETROS PARA TODOS LOS MODELOS (2do dataset balanceado)
 ###############################################################################
+# Definición de grids de hiperparámetros para cada modelo
+param_grid_2 = {
+    "Logistic Regression": {
+        'C': [0.01, 0.1, 1, 10, 100],
+        'solver': ['liblinear', 'lbfgs']
+    },
+    "Random Forest": {
+        'n_estimators': [50, 100],
+        'max_features': ['auto', 'sqrt'],
+        'max_depth': [None, 10, 20]
+    },
+    "Naive Bayes (Multinomial)": {
+        'alpha': [0.1, 1.0, 10.0]
+    },
+    "Naive Bayes (Bernoulli)": {
+        'alpha': [0.1, 1.0, 10.0]
+    },
+    "Decision Tree": {
+        'max_depth': [None, 10, 20, 30],
+        'min_samples_split': [2, 10, 20]
+    },
+    "SVM": {
+        'C': [0.1, 1, 10],
+        'kernel': ['linear', 'rbf']
+    },
+    "K-Nearest Neighbors": {
+        'n_neighbors': [3, 5, 7],
+        'weights': ['uniform', 'distance']
+    },
+    "Gradient Boosting": {
+        'n_estimators': [50, 100],
+        'learning_rate': [0.01, 0.1, 0.2],
+        'max_depth': [3, 5, 7]
+    }
+}
+
 best_params_2 = {}
-for model_name in ["Logistic Regression", "Random Forest"]:
-    print(f"\nBúsqueda de hiperparámetros para {model_name} (dataset 2)")
-    base_model = models_2[model_name]
-    grid_search_2 = hyperparameter_search(base_model, param_grid_1[model_name], X_train_2, y_train_2)
-    best_params_2[model_name] = grid_search_2.best_params_
-    print("Mejores hiperparámetros:", grid_search_2.best_params_)
+with open('results_segundo_dataset.txt', 'a') as output_file:
+    for model_name, param_grid in param_grid_2.items():
+        print(f"\nBúsqueda de hiperparámetros para {model_name} (dataset 2)")
+        base_model = models_2[model_name]
+        grid_search_2 = hyperparameter_search(base_model, param_grid, X_train_2, y_train_2, output_file)
+        best_params_2[model_name] = grid_search_2.best_params_
+        print(f"Mejores hiperparámetros para {model_name}:", grid_search_2.best_params_)
 
 ###############################################################################
 #            TERCER DATASET (reviews.csv), CON FORMATO UNIFICADO
@@ -330,7 +393,7 @@ models_3_before = {
     "Logistic Regression": LogisticRegression(max_iter=1000),
     "Naive Bayes (Multinomial)": MultinomialNB(),
     "Naive Bayes (Bernoulli)": BernoulliNB(),
-    "random Forest": RandomForestClassifier(),
+    "Random Forest": RandomForestClassifier(),
 }
 
 # Entrenamiento y evaluación (versión "antes")
@@ -345,7 +408,7 @@ param_grid_3 = {
         'C': [0.1, 1, 10],
         'solver': ['newton-cg', 'lbfgs', 'liblinear']
     },
-    "random Forest": {
+    "Random Forest": {
         'n_estimators': [50, 100],
         'max_features': ['auto', 'sqrt'],
         'max_depth': [None, 10, 20]
@@ -371,7 +434,7 @@ models_3_after = {
     "Logistic Regression": LogisticRegression(max_iter=1000, **best_params_3["Logistic Regression"]),
     "Naive Bayes (Multinomial)": MultinomialNB(**best_params_3["Naive Bayes (Multinomial)"]),
     "Naive Bayes (Bernoulli)": BernoulliNB(**best_params_3["Naive Bayes (Bernoulli)"]),
-    "random Forest": RandomForestClassifier(**best_params_3["random Forest"])
+    "Random Forest": RandomForestClassifier(**best_params_3["Random Forest"])
 }
 
 # Entrenamiento y evaluación (versión "después")
