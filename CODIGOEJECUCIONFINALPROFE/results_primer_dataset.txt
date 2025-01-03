@@ -7,10 +7,10 @@ ROC AUC: 0.9638
 
 Resultados para Random Forest:
 Accuracy: 0.9440
-Precision: 0.9440
-Recall: 1.0000
+Precision: 0.9449
+Recall: 0.9989
 F1 Score: 0.9712
-ROC AUC: 0.9544
+ROC AUC: 0.9512
 
 Resultados para Naive Bayes (Multinomial):
 Accuracy: 0.9430
@@ -34,11 +34,11 @@ F1 Score: 0.8155
 ROC AUC: 0.5108
 
 Resultados para Decision Tree:
-Accuracy: 0.9318
-Precision: 0.9694
-Recall: 0.9579
-F1 Score: 0.9636
-ROC AUC: 0.7290
+Accuracy: 0.9430
+Precision: 0.9729
+Recall: 0.9666
+F1 Score: 0.9697
+ROC AUC: 0.7601
 
 Resultados para SVM:
 Accuracy: 0.9491
@@ -59,5 +59,5 @@ Accuracy: 0.9481
 Precision: 0.9553
 Recall: 0.9914
 F1 Score: 0.9730
-ROC AUC: 0.9070
+ROC AUC: 0.9075
 

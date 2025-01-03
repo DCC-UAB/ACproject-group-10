@@ -1,7 +1,6 @@
 import os
 import re
 import kagglehub
-import os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -27,14 +26,15 @@ from sklearn.metrics import (
     auc,
     confusion_matrix
 )
+
 print("Descomprimir CSVs en la carpeta CODIGOEJECUCIONFINALPROFE y ejecutar este script")
 print("El codigo de este script es el usado durante toda la practica, solo reorganizado para ejecutarlo de manera secuencial con ligertos cambios o excepciones")
+
 ###############################################################################
 #                          DESCARGA DE RECURSOS NLTK
 ###############################################################################
 nltk.download('stopwords')
 nltk.download('punkt')
-
 
 print("descarga de dataset grande, dataset base esta en el directorio actual")
 # Descargar el dataset al directorio actual
@@ -45,8 +45,9 @@ print("Si aparece un error de descarga, borrar la linea de descarga y simplement
 sleep(1)
 print("Tambien se puede descargar manualmente de https://www.kaggle.com/snap/amazon-fine-food-reviews")
 sleep(5)
-path = kagglehub.dataset_download("snap/amazon-fine-food-reviews", current_directory)
-print("Path to dataset files:", path)
+#path = kagglehub.dataset_download("snap/amazon-fine-food-reviews", current_directory)
+#print("Path to dataset files:", path)
+
 ###############################################################################
 #                           FUNCIÓN DE LIMPIEZA DE TEXTO
 ###############################################################################
@@ -64,7 +65,7 @@ def clean_text(text):
 ###############################################################################
 #                        FUNCIÓN PARA ENTRENAR Y EVALUAR MODELOS
 ###############################################################################
-def train_and_evaluate(models, X_train, X_test, y_train, y_test, folder_name, output_filename):
+def train_and_evaluate(models, X_train, X_test, y_train, y_test, folder_name, output_filename, feature_names):
     """
     Entrena y evalúa cada modelo en 'models'.
     Genera matriz de confusión y curva ROC. Guarda métricas en un diccionario.
@@ -118,6 +119,30 @@ def train_and_evaluate(models, X_train, X_test, y_train, y_test, folder_name, ou
         plt.ylabel('Real')
         plt.savefig(f'{folder_name}/confusion_matrix_{model_name.replace(" ", "_").lower()}.png')
         plt.close()
+
+        # Palabras más importantes
+        if hasattr(model, 'coef_'):
+            coefs = model.coef_[0].toarray() if hasattr(model.coef_[0], 'toarray') else model.coef_[0]
+        elif hasattr(model, 'feature_importances_'):
+            coefs = model.feature_importances_
+        else:
+            continue
+
+        # Asegurarse de que coefs y feature_names tengan la misma longitud
+        if len(coefs) == len(feature_names):
+            top_features = np.argsort(coefs)[-10:]
+            top_weights = coefs[top_features]
+            top_words = [feature_names[i] for i in top_features]
+
+            plt.figure(figsize=(10, 6))
+            sns.barplot(x=top_weights, y=top_words, orient='h')
+            plt.title(f'Palabras más importantes para {model_name}')
+            plt.xlabel('Peso')
+            plt.ylabel('Palabras')
+            plt.savefig(f'{folder_name}/top_words_{model_name.replace(" ", "_").lower()}.png')
+            plt.close()
+        else:
+            output_file.write(f"Error: La longitud de coefs ({len(coefs)}) no coincide con la longitud de feature_names ({len(feature_names)}) para {model_name}\n")
 
     # Imprimir y guardar resultados en archivo
     for model_name, metrics in results.items():
@@ -185,6 +210,7 @@ dfSimpleBinary['reviewText'] = dfSimpleBinary['reviewText'].apply(clean_text)
 tfidf_1 = TfidfVectorizer(max_features=5000)
 X_1 = tfidf_1.fit_transform(dfSimpleBinary['reviewText'])
 y_1 = dfSimpleBinary['overall']
+feature_names_1 = tfidf_1.get_feature_names_out()
 
 # División de datos en entrenamiento y prueba
 X_train_1, X_test_1, y_train_1, y_test_1 = train_test_split(X_1, y_1, test_size=0.2, random_state=42)
@@ -204,7 +230,7 @@ models_1 = {
 
 # Entrenamiento y evaluación
 results_1 = train_and_evaluate(models_1, X_train_1, X_test_1, y_train_1, y_test_1,
-                               'plots_primer_dataset', 'results_primer_dataset.txt')
+                               'plots_primer_dataset', 'results_primer_dataset.txt', feature_names_1)
 
 ###############################################################################
 #          BÚSQUEDA DE HIPERPARÁMETROS PARA ALGUNOS MODELOS (1er dataset)
@@ -251,7 +277,7 @@ models_2 = models_1
 
 # Entrenamiento y evaluación
 results_2 = train_and_evaluate(models_2, X_train_2, X_test_2, y_train_2, y_test_2,
-                               'plots_segundo_dataset', 'results_segundo_dataset.txt')
+                               'plots_segundo_dataset', 'results_segundo_dataset.txt', feature_names_1)
 
 ###############################################################################
 #   BÚSQUEDA DE HIPERPARÁMETROS PARA ALGUNOS MODELOS (2do dataset balanceado)
@@ -286,6 +312,7 @@ dfSimpleBinary_3['Text'] = dfSimpleBinary_3['Text'].apply(clean_text)
 tfidf_3 = TfidfVectorizer(max_features=5000)
 X_3 = tfidf_3.fit_transform(dfSimpleBinary_3['Text'])
 y_3 = dfSimpleBinary_3['Score']
+feature_names_3 = tfidf_3.get_feature_names_out()
 
 # Crear un conjunto de datos balanceado (como en los otros ejemplos)
 df_positive_3 = dfSimpleBinary_3[dfSimpleBinary_3['Score'] == 1]
@@ -303,12 +330,13 @@ models_3_before = {
     "Logistic Regression": LogisticRegression(max_iter=1000),
     "Naive Bayes (Multinomial)": MultinomialNB(),
     "Naive Bayes (Bernoulli)": BernoulliNB(),
+    "random Forest": RandomForestClassifier(),
 }
 
 # Entrenamiento y evaluación (versión "antes")
 results_3_before = train_and_evaluate(
     models_3_before, X_train_3, X_test_3, y_train_3, y_test_3,
-    'hyperParams2Balanced_plots', 'results_3_before.txt'
+    'hyperParams2Balanced_plots', 'results_3_before.txt', feature_names_3
 )
 
 # Búsqueda de hiperparámetros (adaptada al 3er dataset)
@@ -317,9 +345,12 @@ param_grid_3 = {
         'C': [0.1, 1, 10],
         'solver': ['newton-cg', 'lbfgs', 'liblinear']
     },
+    "random Forest": {
+        'n_estimators': [50, 100],
+        'max_features': ['auto', 'sqrt'],
+        'max_depth': [None, 10, 20]
+    },
     "Naive Bayes (Multinomial)": {
-        # Ejemplo: En MultinomialNB no hay muchos hiperparámetros relevantes,
-        # pero se podría modificar 'alpha'
         'alpha': [0.1, 1.0, 10.0]
     },
     "Naive Bayes (Bernoulli)": {
@@ -339,13 +370,14 @@ for model_name, model in models_3_before.items():
 models_3_after = {
     "Logistic Regression": LogisticRegression(max_iter=1000, **best_params_3["Logistic Regression"]),
     "Naive Bayes (Multinomial)": MultinomialNB(**best_params_3["Naive Bayes (Multinomial)"]),
-    "Naive Bayes (Bernoulli)": BernoulliNB(**best_params_3["Naive Bayes (Bernoulli)"])
+    "Naive Bayes (Bernoulli)": BernoulliNB(**best_params_3["Naive Bayes (Bernoulli)"]),
+    "random Forest": RandomForestClassifier(**best_params_3["random Forest"])
 }
 
 # Entrenamiento y evaluación (versión "después")
 results_3_after = train_and_evaluate(
     models_3_after, X_train_3, X_test_3, y_train_3, y_test_3,
-    'hyperParams2Balanced_plots', 'results_3_after.txt'
+    'hyperParams2Balanced_plots', 'results_3_after.txt', feature_names_3
 )
 
 output_file_3.close()
