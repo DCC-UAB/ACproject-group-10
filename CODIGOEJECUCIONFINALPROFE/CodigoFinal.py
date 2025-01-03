@@ -394,6 +394,7 @@ models_3_before = {
     "Naive Bayes (Multinomial)": MultinomialNB(),
     "Naive Bayes (Bernoulli)": BernoulliNB(),
     "Random Forest": RandomForestClassifier(),
+    "Decision Tree": DecisionTreeClassifier(),
 }
 
 # Entrenamiento y evaluación (versión "antes")
@@ -422,13 +423,13 @@ param_grid_3 = {
 }
 
 best_params_3 = {}
-for model_name, model in models_3_before.items():
-    print(f"\nBúsqueda de hiperparámetros para {model_name} (3er dataset)")
-    grid_search_3 = hyperparameter_search(model, param_grid_3[model_name], X_train_3, y_train_3)
-    best_params_3[model_name] = grid_search_3.best_params_
-    print(f"Mejores hiperparámetros para {model_name}:", grid_search_3.best_params_)
-    output_file_3.write(f"Mejores hiperparámetros para {model_name}: {grid_search_3.best_params_}\n")
-
+with open('results_3_before.txt', 'a') as output_file_3:
+    for model_name, model in models_3_before.items():
+        print(f"\nBúsqueda de hiperparámetros para {model_name} (3er dataset)")
+        grid_search_3 = hyperparameter_search(model, param_grid_3[model_name], X_train_3, y_train_3, output_file_3)
+        best_params_3[model_name] = grid_search_3.best_params_
+        print(f"Mejores hiperparámetros para {model_name}:", grid_search_3.best_params_)
+        output_file_3.write(f"Mejores hiperparámetros para {model_name}: {grid_search_3.best_params_}\n")
 # Modelos con los mejores hiperparámetros
 models_3_after = {
     "Logistic Regression": LogisticRegression(max_iter=1000, **best_params_3["Logistic Regression"]),

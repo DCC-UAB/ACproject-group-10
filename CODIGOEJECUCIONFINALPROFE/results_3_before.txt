@@ -1,0 +1,43 @@
+Resultados para Logistic Regression:
+Accuracy: 0.8740
+Precision: 0.8774
+Recall: 0.8669
+F1 Score: 0.8721
+ROC AUC: 0.9429
+
+Resultados para Naive Bayes (Multinomial):
+Accuracy: 0.8475
+Precision: 0.8447
+Recall: 0.8485
+F1 Score: 0.8466
+ROC AUC: 0.9238
+
+Resultados para Naive Bayes (Bernoulli):
+Accuracy: 0.8232
+Precision: 0.7935
+Recall: 0.8697
+F1 Score: 0.8299
+ROC AUC: 0.9072
+
+Resultados para Random Forest:
+Accuracy: 0.8827
+Precision: 0.8801
+Recall: 0.8838
+F1 Score: 0.8819
+ROC AUC: 0.9567
+
+Resultados para decision_tree:
+Accuracy: 0.7991
+Precision: 0.7997
+Recall: 0.7936
+F1 Score: 0.7966
+ROC AUC: 0.7991
+
+Mejores hiperparámetros para LogisticRegression: {'C': 1, 'solver': 'liblinear'}
+Mejores hiperparámetros para Logistic Regression: {'C': 1, 'solver': 'liblinear'}
+Mejores hiperparámetros para MultinomialNB: {'alpha': 10.0}
+Mejores hiperparámetros para Naive Bayes (Multinomial): {'alpha': 10.0}
+Mejores hiperparámetros para BernoulliNB: {'alpha': 0.1}
+Mejores hiperparámetros para Naive Bayes (Bernoulli): {'alpha': 0.1}
+Mejores hiperparámetros para RandomForestClassifier: {'max_depth': None, 'max_features': 'sqrt', 'n_estimators': 100}
+Mejores hiperparámetros para Random Forest: {'max_depth': None, 'max_features': 'sqrt', 'n_estimators': 100}

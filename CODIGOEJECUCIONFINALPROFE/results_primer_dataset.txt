@@ -6,11 +6,11 @@ F1 Score: 0.9716
 ROC AUC: 0.9638
 
 Resultados para Random Forest:
-Accuracy: 0.9420
-Precision: 0.9430
+Accuracy: 0.9461
+Precision: 0.9468
 Recall: 0.9989
-F1 Score: 0.9701
-ROC AUC: 0.9380
+F1 Score: 0.9722
+ROC AUC: 0.9543
 
 Resultados para Naive Bayes (Multinomial):
 Accuracy: 0.9430
@@ -34,11 +34,11 @@ F1 Score: 0.8155
 ROC AUC: 0.5108
 
 Resultados para Decision Tree:
-Accuracy: 0.9390
-Precision: 0.9738
-Recall: 0.9612
-F1 Score: 0.9674
-ROC AUC: 0.7663
+Accuracy: 0.9318
+Precision: 0.9715
+Recall: 0.9558
+F1 Score: 0.9636
+ROC AUC: 0.7457
 
 Resultados para SVM:
 Accuracy: 0.9491
@@ -55,17 +55,17 @@ F1 Score: 0.9726
 ROC AUC: 0.8338
 
 Resultados para Gradient Boosting:
-Accuracy: 0.9471
+Accuracy: 0.9481
 Precision: 0.9553
-Recall: 0.9903
-F1 Score: 0.9725
-ROC AUC: 0.9065
+Recall: 0.9914
+F1 Score: 0.9730
+ROC AUC: 0.9145
 
 Mejores hiperparámetros para LogisticRegression: {'C': 100, 'solver': 'liblinear'}
 Mejores hiperparámetros para RandomForestClassifier: {'max_depth': None, 'max_features': 'sqrt', 'n_estimators': 50}
 Mejores hiperparámetros para MultinomialNB: {'alpha': 0.1}
 Mejores hiperparámetros para BernoulliNB: {'alpha': 10.0}
-Mejores hiperparámetros para DecisionTreeClassifier: {'max_depth': 10, 'min_samples_split': 2}
+Mejores hiperparámetros para DecisionTreeClassifier: {'max_depth': 20, 'min_samples_split': 10}
 Mejores hiperparámetros para SVC: {'C': 10, 'kernel': 'linear'}
 Mejores hiperparámetros para KNeighborsClassifier: {'n_neighbors': 5, 'weights': 'uniform'}
-Mejores hiperparámetros para GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 100}
+Mejores hiperparámetros para GradientBoostingClassifier: {'learning_rate': 0.1, 'max_depth': 3, 'n_estimators': 50}
